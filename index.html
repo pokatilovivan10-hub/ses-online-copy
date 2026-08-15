@@ -962,8 +962,7 @@ h1 .accent{color:#ff5a67}
     })
     .then(function(data){
       if(data && data.ok){
-        form.style.display = 'none';
-        success.style.display = 'block';
+        window.location.href = '/thanks.html';
       } else {
         throw new Error((data && data.error) || 'send failed');
       }
