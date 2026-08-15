@@ -13,7 +13,11 @@ const expectedContent = [
   'professional-dez@yandex.ru',
   'Уничтожение клопов и тараканов в квартире и доме',
   'Вызвать дезинфектора со скидкой',
-  "window.location.href = '/thanks.html';"
+  "window.location.href = '/thanks.html';",
+  'mod.gudok.tel/script.js?sid=',
+  'k9e3j6xpn5',
+  'mc.yandex.ru/metrika/tag.js?id=111540212',
+  "ym(111540212, 'init'"
 ];
 
 for (const page of ['index.html', path.join('dist', 'index.html')]) {
