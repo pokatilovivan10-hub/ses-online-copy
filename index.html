@@ -218,7 +218,7 @@ h1 .accent{color:#ff5a67}
 .cta-form input{width:100%;padding:16px 18px;border-radius:10px;border:2px solid transparent;font-size:16px;font-family:'Roboto',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
 .cta-form input:focus{border-color:var(--navy);box-shadow:0 0 0 4px rgba(26,43,76,.18)}
 .cta-form input.error{border-color:#7a0f16;box-shadow:0 0 0 4px rgba(122,15,22,.25)}
-.cta-form .btn{background:var(--navy);white-space:nowrap}
+.cta-form .btn{background:var(--navy);color:#fff;white-space:nowrap}
 .cta-form .btn:hover{background:var(--navy-dark);box-shadow:0 12px 30px rgba(0,0,0,.3)}
 .cta-legal{margin-top:18px;font-size:12.5px;color:rgba(255,255,255,.78);position:relative;z-index:1}
 .cta-success{display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:20px 24px;font-weight:600;font-size:16px;position:relative;z-index:1}
@@ -248,6 +248,7 @@ h1 .accent{color:#ff5a67}
 .footer-contacts a:hover{color:#ff8b95}
 .footer .btn{margin-top:16px;font-size:14px;padding:12px 22px}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding:20px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px}
+.footer-legal{display:flex;gap:16px;flex-wrap:wrap}
 .footer-bottom a:hover{color:#fff}
 
 /* ---------- Responsive ---------- */
@@ -334,7 +335,7 @@ h1 .accent{color:#ff5a67}
   .map-box,.map-box iframe{min-height:300px}
   .footer{padding-top:50px}
   .footer-grid{gap:34px;padding-bottom:36px}
-  .footer-bottom{flex-direction:column}
+  .footer-bottom,.footer-legal{flex-direction:column;gap:8px}
 }
 @media (max-width:380px){
   h1{font-size:27px}
@@ -363,7 +364,7 @@ h1 .accent{color:#ff5a67}
             <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </a>
           <div class="dropdown">
-            <a href="#cta">Уничтожение клопов</a>
+            <a href="#cta">Уничтожение клопов и тараканов</a>
             <a href="#methods">Обработка холодным туманом</a>
             <a href="#methods">Обработка горячим туманом</a>
             <a href="#methods">Барьерная защита</a>
@@ -429,7 +430,7 @@ h1 .accent{color:#ff5a67}
     <div class="prices-grid">
       <div class="price-card reveal">
         <h3>Квартира до 60 м²</h3>
-        <div class="price-value">от 4 500 ₽</div>
+        <div class="price-value">от 1 990 ₽</div>
         <ul>
           <li>Выезд мастера и осмотр</li>
           <li>Обработка холодным туманом</li>
@@ -440,7 +441,7 @@ h1 .accent{color:#ff5a67}
       </div>
       <div class="price-card reveal">
         <h3>Квартира до 100 м²</h3>
-        <div class="price-value">от 5 500 ₽</div>
+        <div class="price-value">от 2 490 ₽</div>
         <ul>
           <li>Выезд мастера и осмотр</li>
           <li>Холодный + горячий туман</li>
@@ -451,7 +452,7 @@ h1 .accent{color:#ff5a67}
       </div>
       <div class="price-card reveal">
         <h3>Дом 100–200 м²</h3>
-        <div class="price-value">от 6 500 ₽</div>
+        <div class="price-value">от 3 190 ₽</div>
         <ul>
           <li>Выезд мастера и осмотр</li>
           <li>Комплексная обработка туманом</li>
@@ -557,7 +558,7 @@ h1 .accent{color:#ff5a67}
       <div class="method-media"><img src="img/specialist.jpg" alt="Специалист проводит обработку горячим туманом" loading="lazy"></div>
       <div>
         <h3>Горячий туман</h3>
-        <p>Высокая температура пара уничтожает яйца и личинки клопов, устойчивые к химии. Идеален для обработки труднодоступных мест: за радиаторами, в подполах, за обшивкой и внутри диванных механизмов.</p>
+        <p>Высокая температура пара уничтожает яйца и личинки клопов и тараканов, устойчивые к химии. Идеален для обработки труднодоступных мест: за радиаторами, в подполах, за обшивкой и внутри диванных механизмов.</p>
         <span class="method-tag">Температура пара до 70 °C</span>
         <span class="method-tag">Гибкая насадка-шланг</span>
       </div>
@@ -566,7 +567,7 @@ h1 .accent{color:#ff5a67}
     <div class="method reveal">
       <div class="method-media"><img src="img/barrier.jpg" alt="Нанесение барьерной защиты по периметру участка" loading="lazy"></div>
       <div>
-        <h3>Барьерная защита</h3>
+        <h3>Комплексная барьерная защита от проникновения насекомых</h3>
         <p>Нанесение пролонгированного геля или мелового барьера по периметру дома, вентиляционным каналам и вводам коммуникаций. Предотвращает повторную миграцию клопов от соседей и с улицы на срок до 6 месяцев.</p>
         <span class="method-tag">Гель пролонгированного действия</span>
         <span class="method-tag">Защита до 6 месяцев</span>
@@ -589,7 +590,7 @@ h1 .accent{color:#ff5a67}
       <div>
         <h3>Гарантии и безопасность — официально, по договору</h3>
         <p>Мы даём гарантию до 12 месяцев. В случае повторного обнаружения клопов в гарантийный период — выезжаем и проводим обработку за наш счёт.</p>
-        <p>Препараты имеют свидетельства о государственной регистрации и относятся к 4 классу опасности — безопасны при соблюдении инструкции.</p>
+        <p>Лицензия № Л064-00111-50/02006211 подтверждает право на проведение работ. Препараты имеют свидетельства о государственной регистрации и относятся к 4 классу опасности — безопасны при соблюдении инструкции.</p>
         <div class="guarantee-badges">
           <span class="g-badge">Гарантия 12 месяцев</span>
           <span class="g-badge">Свидетельства госрегистрации</span>
@@ -797,7 +798,10 @@ h1 .accent{color:#ff5a67}
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 СЭС Москва. Все права защищены.</span>
+      <div class="footer-legal">
+        <span>© 2011-2026 СЭС Москва. Все права защищены.</span>
+        <span>ИП Репников Алексей Андреевич. ОГРН: 322508100080737</span>
+      </div>
       <a href="#top">Политика конфиденциальности</a>
     </div>
   </div>
