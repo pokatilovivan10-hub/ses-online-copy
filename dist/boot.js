@@ -114,6 +114,7 @@ function serveStatic(req, res) {
     return res.end('Bad request');
   }
   if (urlPath === '/') urlPath = '/index.html';
+  if (urlPath === '/thanks') urlPath = '/thanks.html';
   const filePath = path.normalize(path.join(PUBLIC_DIR, urlPath));
   if (!filePath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403);

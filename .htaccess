@@ -1,9 +1,6 @@
-RewriteEngine On
-
-# Keep ACME validation reachable for automatic certificate renewals.
-RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
-RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC,OR]
-RewriteCond %{HTTP_HOST} ^www\.xn--q1aa9a\.online$ [NC]
-RewriteRule ^ https://xn--q1aa9a.online%{REQUEST_URI} [R=301,L,NE]
-
+# Keep directory listings disabled. HTTPS will be enabled only after the
+# certificate for сэс.site has been issued on the web server.
 Options -Indexes
+
+RewriteEngine On
+RewriteRule ^thanks/?$ thanks.html [L]
