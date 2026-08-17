@@ -16,20 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, ['ok' => false, 'error' => 'Метод не поддерживается']);
 }
 
-$configPath = dirname(__DIR__, 3) . '/private/ses-config.php';
-if (!is_file($configPath)) {
-    error_log('[lead] Missing private configuration');
-    respond(500, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
-}
-
-$config = require $configPath;
-$token = (string)($config['telegram_bot_token'] ?? '');
-$chatId = (string)($config['telegram_chat_id'] ?? '');
-if ($token === '' || $chatId === '') {
-    error_log('[lead] Telegram configuration is incomplete');
-    respond(500, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
-}
-
 $raw = file_get_contents('php://input');
 if ($raw === false || strlen($raw) > 10240) {
     respond(400, ['ok' => false, 'error' => 'Некорректный запрос']);
@@ -54,6 +40,30 @@ if (strlen($digits) !== 11) {
 }
 
 $escape = static fn(string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$site = preg_replace('/[^a-z0-9.-]/i', '', (string)($_SERVER['HTTP_HOST'] ?? '')) ?: 'ses.site';
+$subject = 'Новая заявка с ' . $site;
+$emailMessage = "Новая заявка с сайта {$site}\n\n"
+    . 'Имя: ' . ($name !== '' ? $name : '—') . "\n"
+    . "Телефон: {$phone}\n"
+    . 'Адрес: ' . ($address !== '' ? $address : '—') . "\n"
+    . "Скидка: 10% (заказ с сайта)\n";
+
+if (!mail('professional-dez@yandex.ru', $subject, $emailMessage, [
+    'From' => 'СЭС <no-reply@' . $site . '>',
+    'Content-Type' => 'text/plain; charset=UTF-8',
+])) {
+    error_log('[lead] Email delivery failed');
+    respond(502, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
+}
+
+$configPath = dirname(__DIR__, 3) . '/private/ses-config.php';
+$config = is_file($configPath) ? require $configPath : [];
+$token = (string)($config['telegram_bot_token'] ?? '');
+$chatId = (string)($config['telegram_chat_id'] ?? '');
+if ($token === '' || $chatId === '') {
+    respond(200, ['ok' => true]);
+}
+
 $message = "🪳 <b>Новая заявка с сайта СЭС Москва</b>\n\n"
     . '<b>Имя:</b> ' . ($name !== '' ? $escape($name) : '—') . "\n"
     . '<b>Телефон:</b> ' . $escape($phone) . "\n"
