@@ -4,3 +4,4 @@ Options -Indexes
 
 RewriteEngine On
 RewriteRule ^thanks/?$ thanks.html [L]
+RewriteRule ^api/lead/?$ api/lead.php [L]

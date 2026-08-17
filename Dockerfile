@@ -2,7 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json build.js ./
+COPY package.json package-lock.json build.js ./
+COPY .htaccess CNAME ./
+COPY api ./api
 COPY dist ./dist
 
 RUN npm run build

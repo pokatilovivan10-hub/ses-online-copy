@@ -13,6 +13,7 @@ const expectedContent = [
   'professional-dez@yandex.ru',
   'Уничтожение клопов и тараканов в квартире и доме',
   'Вызвать дезинфектора со скидкой',
+  "fetch('/api/lead',",
   "window.location.href = '/thanks';",
   'mc.yandex.ru/metrika/tag.js?id=111540212',
   "ym(111540212, 'init'",
@@ -33,6 +34,7 @@ for (const page of ['index.html', path.join('dist', 'index.html')]) {
     const html = fs.readFileSync(path.join(root, page), 'utf8');
     for (const content of expectedContent) assert.ok(html.includes(content), `${page} is missing: ${content}`);
     assert.doesNotMatch(html, /gudok\.tel|GudokData|k9e3j6xpn5/i, `${page} must not load Gudok`);
+    assert.doesNotMatch(html, /\/api\/lead\.php/, `${page} must use the canonical /api/lead endpoint`);
   });
 }
 
@@ -51,11 +53,24 @@ test('deployment configuration keeps the .site domain reachable before SSL is is
     assert.equal(cName, 'xn--q1aa9a.site', `${cNameFile} must point to сэс.site`);
   }
 
-  const htaccess = fs.readFileSync(path.join(root, '.htaccess'), 'utf8');
-  assert.match(htaccess, /^Options -Indexes$/m);
-  assert.match(htaccess, /^RewriteRule \^thanks\/\?\$ thanks\.html \[L\]$/m);
-  assert.doesNotMatch(htaccess, /https:\/\//i, '.htaccess must not force HTTPS before a certificate exists');
+  for (const htaccessFile of ['.htaccess', path.join('dist', '.htaccess')]) {
+    const htaccess = fs.readFileSync(path.join(root, htaccessFile), 'utf8');
+    assert.match(htaccess, /^Options -Indexes$/m);
+    assert.match(htaccess, /^RewriteRule \^thanks\/\?\$ thanks\.html \[L\]$/m);
+    assert.match(htaccess, /^RewriteRule \^api\/lead\/\?\$ api\/lead\.php \[L\]$/m);
+    assert.doesNotMatch(htaccess, /https:\/\/|\.online/i, `${htaccessFile} must not redirect to the old domain or force HTTPS`);
+  }
+
+  assert.equal(
+    fs.readFileSync(path.join(root, 'dist', 'api', 'lead.php'), 'utf8'),
+    fs.readFileSync(path.join(root, 'api', 'lead.php'), 'utf8'),
+    'build output must include the Apache lead handler'
+  );
 
   const boot = fs.readFileSync(path.join(root, 'dist', 'boot.js'), 'utf8');
   assert.match(boot, /if \(urlPath === '\/thanks'\) urlPath = '\/thanks\.html';/);
+  assert.match(boot, /p === '\/api\/lead'/);
+
+  const dockerfile = fs.readFileSync(path.join(root, 'Dockerfile'), 'utf8');
+  assert.match(dockerfile, /COPY api \.\/api/, 'Docker build must include the source Apache handler');
 });

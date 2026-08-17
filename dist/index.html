@@ -948,7 +948,7 @@ h1 .accent{color:#ff5a67}
     phone.classList.remove('error');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Отправляем…';
-    fetch('/api/lead.php', {
+    fetch('/api/lead', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

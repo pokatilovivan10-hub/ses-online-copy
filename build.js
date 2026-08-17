@@ -6,6 +6,10 @@ const path = require('path');
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
 
+// Keep Apache deployment files in the published directory in sync with source.
+fs.copyFileSync(path.join(ROOT, '.htaccess'), path.join(DIST, '.htaccess'));
+fs.cpSync(path.join(ROOT, 'api'), path.join(DIST, 'api'), { recursive: true, force: true });
+
 // dist должен существовать и содержать файлы сайта
 const required = ['boot.js', 'index.html', path.join('img', 'hero.jpg')];
 let ok = true;
@@ -19,4 +23,4 @@ if (!ok) process.exit(1);
 
 // Синтаксис входной точки
 require('child_process').execSync(process.execPath + ' --check ' + JSON.stringify(path.join(DIST, 'boot.js')), { stdio: 'inherit' });
-console.log('Сборка завершена: dist/boot.js и статика на месте.');
+console.log('Сборка завершена: dist/boot.js, статика и Apache-конфигурация на месте.');
