@@ -17,6 +17,7 @@ const expectedContent = [
   "window.location.href = '/thanks';",
   'mc.yandex.ru/metrika/tag.js?id=111540212',
   "ym(111540212, 'init'",
+  'img/specialist-v2.jpg',
   'Уничтожение клопов и тараканов</a>',
   'Высокая температура пара уничтожает яйца и личинки клопов и тараканов',
   'Комплексная барьерная защита от проникновения насекомых',
@@ -44,8 +45,25 @@ for (const page of ['thanks.html', path.join('dist', 'thanks.html')]) {
     assert.match(html, /Спасибо за заявку, наш менеджер свяжется с вами в течении 5 минут/);
     assert.match(html, /background:\s*#fff/);
     assert.match(html, /display:\s*grid/);
+    assert.match(html, /mc\.yandex\.ru\/metrika\/tag\.js\?id=111540212/);
+    assert.match(html, /ym\(111540212, 'init'/);
+    assert.match(html, /mc\.yandex\.ru\/watch\/111540212/);
   });
 }
+
+test('lead handler attempts Telegram even when server email is unavailable', () => {
+  const handler = fs.readFileSync(path.join(root, 'api', 'lead.php'), 'utf8');
+  assert.match(handler, /\$emailOk\s*=\s*mail\(/);
+  assert.doesNotMatch(handler, /if \(!mail\([\s\S]*?respond\(502/);
+  assert.match(handler, /if \(!\$emailOk && !\$telegramOk\)/);
+});
+
+test('replacement specialist image is present in source and build output', () => {
+  for (const image of ['img/specialist-v2.jpg', path.join('dist', 'img', 'specialist-v2.jpg')]) {
+    assert.ok(fs.existsSync(path.join(root, image)), `${image} is missing`);
+    assert.ok(fs.statSync(path.join(root, image)).size > 100000, `${image} is unexpectedly small`);
+  }
+});
 
 test('deployment configuration keeps the .site domain reachable before SSL is issued', () => {
   for (const cNameFile of ['CNAME', path.join('dist', 'CNAME')]) {

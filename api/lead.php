@@ -48,56 +48,62 @@ $emailMessage = "Новая заявка с сайта {$site}\n\n"
     . 'Адрес: ' . ($address !== '' ? $address : '—') . "\n"
     . "Скидка: 10% (заказ с сайта)\n";
 
-if (!mail('professional-dez@yandex.ru', $subject, $emailMessage, [
+$emailOk = mail('professional-dez@yandex.ru', $subject, $emailMessage, [
     'From' => 'СЭС <no-reply@' . $site . '>',
     'Content-Type' => 'text/plain; charset=UTF-8',
-])) {
+]);
+if (!$emailOk) {
     error_log('[lead] Email delivery failed');
-    respond(502, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
 }
 
 $configPath = dirname(__DIR__, 3) . '/private/ses-config.php';
 $config = is_file($configPath) ? require $configPath : [];
 $token = (string)($config['telegram_bot_token'] ?? '');
 $chatId = (string)($config['telegram_chat_id'] ?? '');
-if ($token === '' || $chatId === '') {
-    respond(200, ['ok' => true]);
+$telegramOk = false;
+
+if ($token !== '' && $chatId !== '') {
+    $message = "🪳 <b>Новая заявка с сайта СЭС Москва</b>\n\n"
+        . '<b>Имя:</b> ' . ($name !== '' ? $escape($name) : '—') . "\n"
+        . '<b>Телефон:</b> ' . $escape($phone) . "\n"
+        . '<b>Адрес:</b> ' . ($address !== '' ? $escape($address) : '—') . "\n"
+        . '<b>Скидка:</b> 10% (заказ с сайта)';
+
+    $url = 'https://api.telegram.org/bot' . rawurlencode($token) . '/sendMessage';
+    $payload = json_encode([
+        'chat_id' => $chatId,
+        'text' => $message,
+        'parse_mode' => 'HTML',
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    if ($payload !== false) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 12,
+        ]);
+        $body = curl_exec($ch);
+        $status = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        $telegram = is_string($body) ? json_decode($body, true) : null;
+        $telegramOk = $status === 200 && is_array($telegram) && ($telegram['ok'] ?? false) === true;
+        if (!$telegramOk) {
+            error_log('[lead] Telegram delivery failed: HTTP ' . $status . ($curlError !== '' ? '; ' . $curlError : ''));
+        }
+    } else {
+        error_log('[lead] Telegram payload encoding failed');
+    }
+} else {
+    error_log('[lead] Telegram delivery is not configured');
 }
 
-$message = "🪳 <b>Новая заявка с сайта СЭС Москва</b>\n\n"
-    . '<b>Имя:</b> ' . ($name !== '' ? $escape($name) : '—') . "\n"
-    . '<b>Телефон:</b> ' . $escape($phone) . "\n"
-    . '<b>Адрес:</b> ' . ($address !== '' ? $escape($address) : '—') . "\n"
-    . '<b>Скидка:</b> 10% (заказ с сайта)';
-
-$url = 'https://api.telegram.org/bot' . rawurlencode($token) . '/sendMessage';
-$payload = json_encode([
-    'chat_id' => $chatId,
-    'text' => $message,
-    'parse_mode' => 'HTML',
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
-if ($payload === false) {
-    respond(500, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
-}
-
-$ch = curl_init($url);
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => $payload,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 5,
-    CURLOPT_TIMEOUT => 12,
-]);
-$body = curl_exec($ch);
-$status = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
-
-$telegram = is_string($body) ? json_decode($body, true) : null;
-if ($status !== 200 || !is_array($telegram) || ($telegram['ok'] ?? false) !== true) {
-    error_log('[lead] Telegram delivery failed: HTTP ' . $status . ($curlError !== '' ? '; ' . $curlError : ''));
+if (!$emailOk && !$telegramOk) {
     respond(502, ['ok' => false, 'error' => 'Не удалось отправить заявку']);
 }
 
