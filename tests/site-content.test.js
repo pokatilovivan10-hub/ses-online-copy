@@ -15,6 +15,8 @@ const expectedContent = [
   'Вызвать дезинфектора со скидкой',
   "fetch('/api/lead',",
   "window.location.href = '/thanks';",
+  'mod.gudok.tel/script.js?sid=',
+  '39r37kivrr',
   'mc.yandex.ru/metrika/tag.js?id=111540212',
   "ym(111540212, 'init'",
   'img/specialist-v2.jpg',
@@ -34,7 +36,11 @@ for (const page of ['index.html', path.join('dist', 'index.html')]) {
   test(`${page} contains the requested contact and conversion updates`, () => {
     const html = fs.readFileSync(path.join(root, page), 'utf8');
     for (const content of expectedContent) assert.ok(html.includes(content), `${page} is missing: ${content}`);
-    assert.doesNotMatch(html, /gudok\.tel|GudokData|k9e3j6xpn5/i, `${page} must not load Gudok`);
+    assert.doesNotMatch(html, /k9e3j6xpn5/i, `${page} must not contain the previous Gudok project ID`);
+    const projectIds = [...html.matchAll(/mod\.gudok\.tel\/script\.js\?sid=["']?\s*\+?\s*\w*|"gd",\s*"([a-z0-9]+)"/gi)]
+      .map((match) => match[1])
+      .filter(Boolean);
+    assert.deepEqual(projectIds, ['39r37kivrr'], `${page} must load only the new Gudok project`);
     assert.doesNotMatch(html, /\/api\/lead\.php/, `${page} must use the canonical /api/lead endpoint`);
   });
 }
