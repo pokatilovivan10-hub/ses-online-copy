@@ -7,6 +7,9 @@ const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
 
 // Keep Apache deployment files in the published directory in sync with source.
+for (const file of ['index.html', 'thanks.html', 'CNAME']) {
+  fs.copyFileSync(path.join(ROOT, file), path.join(DIST, file));
+}
 fs.copyFileSync(path.join(ROOT, '.htaccess'), path.join(DIST, '.htaccess'));
 fs.cpSync(path.join(ROOT, 'api'), path.join(DIST, 'api'), { recursive: true, force: true });
 

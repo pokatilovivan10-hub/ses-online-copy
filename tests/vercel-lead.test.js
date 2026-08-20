@@ -6,17 +6,10 @@ const test = require('node:test');
 
 const root = path.resolve(__dirname, '..');
 
-test('Vercel exposes a server-side lead endpoint', () => {
-  assert.ok(
-    fs.existsSync(path.join(root, 'api', 'lead.js')),
-    'Vercel handler api/lead.js is missing'
-  );
-});
-
-test('lead form posts to the canonical Vercel endpoint', () => {
+test('lead form posts directly to the selected email delivery service', () => {
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-  assert.match(html, /fetch\('\/api\/lead',/);
-  assert.doesNotMatch(html, /\/api\/lead\.php/);
+  assert.match(html, /fetch\('https:\/\/formsubmit\.co\/ajax\/professional-dez@yandex\.ru',/);
+  assert.match(html, /_subject: 'Новая заявка с сэс\.site'/);
 });
 
 test('tracked source does not contain a Telegram bot token literal', () => {

@@ -13,7 +13,7 @@ const expectedContent = [
   'professional-dez@yandex.ru',
   'Уничтожение клопов и тараканов в квартире и доме',
   'Вызвать дезинфектора со скидкой',
-  "fetch('/api/lead',",
+  "fetch('https://formsubmit.co/ajax/professional-dez@yandex.ru',",
   "window.location.href = '/thanks';",
   'mod.gudok.tel/script.js?sid=',
   '39r37kivrr',

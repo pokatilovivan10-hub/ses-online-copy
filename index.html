@@ -935,7 +935,7 @@ h1 .accent{color:#ff5a67}
     if(phone.value === '+7 (' || phone.value === '+7') phone.value = '';
   });
 
-  /* ---- Form validation & submit (заявка уходит на сервер -> Telegram) ---- */
+  /* ---- Form validation & submit (заявка уходит на FormSubmit -> email) ---- */
   var form = document.getElementById('leadForm');
   var success = document.getElementById('formSuccess');
   var submitBtn = form.querySelector('button[type="submit"]');
@@ -951,13 +951,15 @@ h1 .accent{color:#ff5a67}
     phone.classList.remove('error');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Отправляем…';
-    fetch('/api/lead', {
+    fetch('https://formsubmit.co/ajax/professional-dez@yandex.ru', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         name: form.name.value,
         phone: phone.value,
-        address: form.address.value
+        address: form.address.value,
+        source: 'сэс.site',
+        _subject: 'Новая заявка с сэс.site'
       })
     })
     .then(function(r){
@@ -968,7 +970,7 @@ h1 .accent{color:#ff5a67}
       });
     })
     .then(function(data){
-      if(data && data.ok){
+      if(data && (data.success === 'true' || data.success === true)){
         window.location.href = '/thanks';
       } else {
         throw new Error((data && data.error) || 'send failed');
